@@ -1,0 +1,22 @@
+Package: EDATool
+Title: The package contains useful functions for Exploratory Data Analysis
+Version: 0.0.0.9000
+Authors@R: 
+    c(person(given = "Filip",
+           family = "Szymański",
+           role = c("aut", "cre"),
+           email = "f.szymanski2@student.uw.edu.pl"),
+  person(given = "Kacper",
+         family = "Sokołowski",
+         role = c("aut"),
+         email = "k.sokolowski5@student.uw.edu.pl"),
+  person(given = "Piotr",
+         family = "Radziszewski",
+         role = c("aut"),
+         email = "p.radziszewski@student.uw.edu.pl"))
+Description: The package facilitates the process of Exploratory Data Analysis.
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
