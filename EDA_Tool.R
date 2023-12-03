@@ -7,16 +7,16 @@ library("stats")
 library("Rcpp")
 library("installr")
 
-# creating a new class lomza that inherits from data.frame
+# creating a new class edatool that inherits from data.frame
 
-lomza <- setClass("lomza", contains = "data.frame")
+edatool <- setClass("edatool", contains = "data.frame")
 
 ######################    Summary extended    ######################
 
 setGeneric(name = "summaryNEW", signature = "object",
            def = function(object) standardGeneric("summaryNEW"))
 
-setMethod(f = "summaryNEW", signature = "lomza", definition = function(object) {
+setMethod(f = "summaryNEW", signature = "edatool", definition = function(object) {
   num_cols <- which(sapply(object, is.numeric))
   num_data <- object[, num_cols]
   non_num_cols <- which(sapply(object, function(x) !is.numeric(x)))
@@ -89,7 +89,7 @@ setMethod(f = "summaryNEW", signature = "lomza", definition = function(object) {
 
 setGeneric("chi_sq", function(object) standardGeneric("chi_sq"))
 
-setMethod("chi_sq", "lomza", function(object) {
+setMethod("chi_sq", "edatool", function(object) {
   
   numeric_cols <- sapply(object, is.numeric)
   
@@ -123,7 +123,7 @@ setMethod("chi_sq", "lomza", function(object) {
 
 setGeneric("t_test", function(object) standardGeneric("t_test"))
 
-setMethod("t_test", "lomza", function(object) {
+setMethod("t_test", "edatool", function(object) {
   
   numeric_cols <- sapply(object, is.numeric)
   
@@ -156,7 +156,7 @@ setMethod("t_test", "lomza", function(object) {
 
 setGeneric("pearson_correlation", function(object) standardGeneric("pearson_correlation"))
 
-setMethod("pearson_correlation", "lomza", function(object) {
+setMethod("pearson_correlation", "edatool", function(object) {
   
   numeric_cols <- sapply(object, is.numeric)
   
@@ -188,7 +188,7 @@ setMethod("pearson_correlation", "lomza", function(object) {
 
 setGeneric("analyze_data", function(object) standardGeneric("analyze_data"))
 
-setMethod("analyze_data", "lomza", function(object) {
+setMethod("analyze_data", "edatool", function(object) {
   
   # Chi-Squared Test
   chi_sq_results <- chi_sq(object)
@@ -217,7 +217,7 @@ setGeneric("fill_numeric", function(object, method) {
   standardGeneric("fill_numeric")
 })
 
-setMethod("fill_numeric", "lomza",
+setMethod("fill_numeric", "edatool",
           function(object, method) {
             if (!is.character(method) && !is.list(method)) {
               stop("Invalid method. Must be a character string or a list")
@@ -273,7 +273,7 @@ setGeneric("fill_non_numeric", function(object, method) {
   standardGeneric("fill_non_numeric")
 })
 
-setMethod("fill_non_numeric", "lomza",
+setMethod("fill_non_numeric", "edatool",
           function(object, method) {
             if (!is.character(method) && !is.list(method)) {
               stop("Invalid method. Must be a character string or a list")
@@ -342,7 +342,7 @@ setGeneric("missing_report", function(object) {
   standardGeneric("missing_report")
 })
 
-setMethod("missing_report", "lomza",
+setMethod("missing_report", "edatool",
           function(object) {
             report <- data.frame(matrix(ncol = 4, nrow = 0))
             colnames(report) <- c("Column Name", "Full Values", "Missing Values", "Percentage Missing")

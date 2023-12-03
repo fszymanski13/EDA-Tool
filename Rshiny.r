@@ -59,12 +59,12 @@ ui <- dashboardPage(
 
 
 server <- function(input, output) {
-  lomza <- setClass("lomza", contains = "data.frame")
+  edatool <- setClass("edatool", contains = "data.frame")
   
   setGeneric(name = "summaryNEW", signature = "object",
              def = function(object) standardGeneric("summaryNEW"))
   
-  setMethod(f = "summaryNEW", signature = "lomza", definition = function(object) {
+  setMethod(f = "summaryNEW", signature = "edatool", definition = function(object) {
     num_cols <- which(sapply(object, is.numeric))
     num_data <- object[, num_cols]
     non_num_cols <- which(sapply(object, function(x) !is.numeric(x)))
@@ -139,7 +139,7 @@ server <- function(input, output) {
   
   setGeneric("chi_sq", function(object) standardGeneric("chi_sq"))
   
-  setMethod("chi_sq", "lomza", function(object) {
+  setMethod("chi_sq", "edatool", function(object) {
     
     numeric_cols <- sapply(object, is.numeric)
     
@@ -169,7 +169,7 @@ server <- function(input, output) {
   
   setGeneric("t_test", function(object) standardGeneric("t_test"))
   
-  setMethod("t_test", "lomza", function(object) {
+  setMethod("t_test", "edatool", function(object) {
     
     numeric_cols <- sapply(object, is.numeric)
     
@@ -200,7 +200,7 @@ server <- function(input, output) {
   
   setGeneric("pearson_correlation", function(object) standardGeneric("pearson_correlation"))
   
-  setMethod("pearson_correlation", "lomza", function(object) {
+  setMethod("pearson_correlation", "edatool", function(object) {
     
     numeric_cols <- sapply(object, is.numeric)
     
@@ -252,7 +252,7 @@ int count_na_char(CharacterVector x) {
     standardGeneric("missing_report")
   })
   
-  setMethod("missing_report", "lomza",
+  setMethod("missing_report", "edatool",
             function(object) {
               report <- data.frame(matrix(ncol = 4, nrow = 0))
               colnames(report) <- c("Column Name", "Full Values", "Missing Values", "Percentage Missing")
@@ -274,7 +274,7 @@ int count_na_char(CharacterVector x) {
     standardGeneric("fill_numeric")
   })
   
-  setMethod("fill_numeric", "lomza",
+  setMethod("fill_numeric", "edatool",
             function(object, method) {
               if (!is.character(method) && !is.list(method)) {
                 stop("Invalid method. Must be a character string or a list")
@@ -328,7 +328,7 @@ int count_na_char(CharacterVector x) {
     standardGeneric("fill_non_numeric")
   })
   
-  setMethod("fill_non_numeric", "lomza",
+  setMethod("fill_non_numeric", "edatool",
             function(object, method) {
               if (!is.character(method) && !is.list(method)) {
                 stop("Invalid method. Must be a character string or a list")
@@ -378,7 +378,7 @@ int count_na_char(CharacterVector x) {
     }
     
     df <- read.csv(file1$datapath, stringsAsFactors = TRUE)
-    new("lomza", df)
+    new("edatool", df)
   })
   
   output$table1 <- DT::renderDataTable({

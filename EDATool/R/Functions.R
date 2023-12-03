@@ -1,9 +1,9 @@
 #' @author Filip Szymański Kacper Sokołowski Piotr Radziszewski
 #' The package contains useful functions for Exploratory Data Analysis
-#' 
+#'
 #' Check and Install Necessary Packages
 #'
-#' This function checks whether the necessary packages are installed in your R environment and 
+#' This function checks whether the necessary packages are installed in your R environment and
 #' installs them if they are not already installed.
 #'
 #' @export
@@ -19,29 +19,29 @@ library("installr")
 
 #' Set Class
 #'
-#' This function creates a new class lomza that inherits from the base class data.frame.
+#' This function creates a new class edatool that inherits from the base class data.frame.
 #' @export
 
-lomza <- setClass("lomza", contains = "data.frame")
+edatool <- setClass("edatool", contains = "data.frame")
 
 
 #' Extended Summary
 #'
 #' This function provides a more detailed summary of the data than the base summary function.
 #' It only applies to numeric columns and gives warning if there are any NA values in the column.
-#' @param object An object of class "lomza".
-#' @return A detailed summary of the data in "lomza" object.
+#' @param object An object of class "edatool".
+#' @return A detailed summary of the data in "edatool" object.
 #' @export
 
 setGeneric(name = "summaryNEW", signature = "object",
            def = function(object) standardGeneric("summaryNEW"))
 
-setMethod(f = "summaryNEW", signature = "lomza", definition = function(object) {
+setMethod(f = "summaryNEW", signature = "edatool", definition = function(object) {
   num_cols <- which(sapply(object, is.numeric))
   num_data <- object[, num_cols]
   non_num_cols <- which(sapply(object, function(x) !is.numeric(x)))
   non_num_data <- object[, non_num_cols]
-  
+
   ## Function to remove NA values and set a warning
   remove_NA <- function(x) {
     if (any(is.na(x))) {
@@ -50,7 +50,7 @@ setMethod(f = "summaryNEW", signature = "lomza", definition = function(object) {
     }
     return(x)
   }
-  
+
   ## Apply summary functions with NA removal
   Min <- round(apply(num_data, 2, function(x) min(remove_NA(x))), 2)
   Max <- apply(num_data, 2, function(x) max(remove_NA(x)))
@@ -76,8 +76,8 @@ setMethod(f = "summaryNEW", signature = "lomza", definition = function(object) {
     trimmed_x <- remove_NA(x)
     sd(trimmed_x) / mean(trimmed_x) * 100
   })
-  
-  
+
+
   ## Create a matrix of the statistics for each numeric column
   stats_matrix <- matrix(nrow = 15, ncol = length(num_cols))
   colnames(stats_matrix) <- colnames(num_data)
@@ -97,7 +97,7 @@ setMethod(f = "summaryNEW", signature = "lomza", definition = function(object) {
   stats_matrix[13,] <- Kurtosis
   stats_matrix[14,] <- meanTRIM10
   stats_matrix[15,] <- meanTRIM20
-  
+
   cat("Summary statistics for numeric data \n")
   print(round(stats_matrix, 2))
   cat("\nSummary statistics for non-numeric data \n")
@@ -106,27 +106,27 @@ setMethod(f = "summaryNEW", signature = "lomza", definition = function(object) {
 
 #' Chi-Squared Test
 #'
-#' This function performs a chi-squared test on all numeric columns of the "lomza" object.
+#' This function performs a chi-squared test on all numeric columns of the "edatool" object.
 #' It will give a warning if there are any NA values in the column.
-#' @param object An object of class "lomza".
-#' @return The chi-squared test results for each numeric column in the "lomza" object.
+#' @param object An object of class "edatool".
+#' @return The chi-squared test results for each numeric column in the "edatool" object.
 #' @export
 
 setGeneric("chi_sq", function(object) standardGeneric("chi_sq"))
 
-setMethod("chi_sq", "lomza", function(object) {
-  
+setMethod("chi_sq", "edatool", function(object) {
+
   numeric_cols <- sapply(object, is.numeric)
-  
+
   chi_results <- lapply(seq_along(numeric_cols)[numeric_cols], function(i) {
     col <- object[[i]]
-    
+
     # Check for NA values and print a warning if present
     if(any(is.na(col))) {
       warning(paste("Column", colnames(object)[i], "contains NA values. They will be removed for the chi-square test."))
       col <- col[!is.na(col)]  # Remove NA values
     }
-    
+
     chisq_test <- chisq.test(col)
     list(
       Column = colnames(object)[i],
@@ -137,34 +137,34 @@ setMethod("chi_sq", "lomza", function(object) {
       p_value = chisq_test$p.value
     )
   })
-  
+
   do.call(rbind, chi_results)
 })
 
 
 #' T-Test
 #'
-#' This function performs a t-test on all numeric columns of the "lomza" object.
+#' This function performs a t-test on all numeric columns of the "edatool" object.
 #' It will give a warning if there are any NA values in the column.
-#' @param object An object of class "lomza".
-#' @return The t-test results for each numeric column in the "lomza" object.
+#' @param object An object of class "edatool".
+#' @return The t-test results for each numeric column in the "edatool" object.
 #' @export
 
 setGeneric("t_test", function(object) standardGeneric("t_test"))
 
-setMethod("t_test", "lomza", function(object) {
-  
+setMethod("t_test", "edatool", function(object) {
+
   numeric_cols <- sapply(object, is.numeric)
-  
+
   t_results <- lapply(seq_along(numeric_cols)[numeric_cols], function(i) {
     col <- object[[i]]
-    
+
     # Check for NA values and print a warning if present
     if(any(is.na(col))) {
       warning(paste("Column", colnames(object)[i], "contains NA values. They will be removed for the t-test."))
       col <- col[!is.na(col)]  # Remove NA values
     }
-    
+
     t_test <- t.test(col)
     list(
       Column = colnames(object)[i],
@@ -174,29 +174,29 @@ setMethod("t_test", "lomza", function(object) {
       Test = "t-test"
     )
   })
-  
+
   do.call(rbind, t_results)
 })
 
 
 #' Pearson's Correlation Coefficient
 #'
-#' This function calculates the Pearson's correlation coefficient between every pair of numeric 
-#' columns in the "lomza" object. It will give a warning if there are any NA values in the columns.
-#' @param object An object of class "lomza".
-#' @return The correlation coefficient between every pair of numeric columns in the "lomza" object.
+#' This function calculates the Pearson's correlation coefficient between every pair of numeric
+#' columns in the "edatool" object. It will give a warning if there are any NA values in the columns.
+#' @param object An object of class "edatool".
+#' @return The correlation coefficient between every pair of numeric columns in the "edatool" object.
 #' @export
 
 setGeneric("pearson_correlation", function(object) standardGeneric("pearson_correlation"))
 
-setMethod("pearson_correlation", "lomza", function(object) {
-  
+setMethod("pearson_correlation", "edatool", function(object) {
+
   numeric_cols <- sapply(object, is.numeric)
-  
+
   correlation_results <- combn(colnames(object)[numeric_cols], 2, function(cols) {
     col1 <- object[[cols[1]]]
     col2 <- object[[cols[2]]]
-    
+
     # Check for NA values and print a warning if present
     if(any(is.na(col1)) || any(is.na(col2))) {
       warning(paste("Columns", cols[1], "and/or", cols[2], "contain NA values. They will be removed for the correlation calculation."))
@@ -204,7 +204,7 @@ setMethod("pearson_correlation", "lomza", function(object) {
       col1 <- col1[!na_rows]  # Remove NA values
       col2 <- col2[!na_rows]  # Remove NA values
     }
-    
+
     correlation <- cor(col1, col2, method = "pearson")
     list(
       Variable_1 = cols[1],
@@ -212,66 +212,66 @@ setMethod("pearson_correlation", "lomza", function(object) {
       Correlation = correlation
     )
   }, simplify = FALSE)
-  
+
   do.call(rbind, correlation_results)
 })
 
 
 #' Data Analysis
 #'
-#' This function performs a chi-squared test, t-test, and calculates the Pearson's correlation 
-#' coefficient for all relevant numeric columns in the "lomza" object.
-#' @param object An object of class "lomza".
-#' @return The results of the chi-squared test, t-test, and Pearson's correlation coefficient 
-#' calculation for the "lomza" object.
+#' This function performs a chi-squared test, t-test, and calculates the Pearson's correlation
+#' coefficient for all relevant numeric columns in the "edatool" object.
+#' @param object An object of class "edatool".
+#' @return The results of the chi-squared test, t-test, and Pearson's correlation coefficient
+#' calculation for the "edatool" object.
 #' @export
 
 setGeneric("analyze_data", function(object) standardGeneric("analyze_data"))
 
-setMethod("analyze_data", "lomza", function(object) {
-  
+setMethod("analyze_data", "edatool", function(object) {
+
   # Chi-Squared Test
   chi_sq_results <- chi_sq(object)
   print("Results of Chi-Squared Test:")
   print(chi_sq_results)
-  
+
   # T-Test
   t_test_results <- t_test(object)
   cat("\n")
   cat("\n")
   print("Results of T-Test:")
   print(t_test_results)
-  
+
   # Pearson's Correlation Coefficient
   correlation_results <- pearson_correlation(object)
   cat("\n")
   cat("\n")
   print("Results of Pearson's Correlation Coefficient:")
   print(correlation_results)
-  
+
 })
 
 
 #' Fill Missing Values for Numeric Columns
 #'
-#' This function provides multiple methods to handle missing values in numeric columns of the 
-#' "lomza" object. The methods include deleting the row or column containing the missing value, 
-#' filling the missing value with mean, median, or mode of the column, or filling with a 
+#' This function provides multiple methods to handle missing values in numeric columns of the
+#' "edatool" object. The methods include deleting the row or column containing the missing value,
+#' filling the missing value with mean, median, or mode of the column, or filling with a
 #' specified constant value.
-#' @param object An object of class "lomza".
-#' @return The "lomza" object with missing values in numeric columns filled.
+#' @param object An object of class "edatool".
+#' @return The "edatool" object with missing values in numeric columns filled.
 #' @export
 
 setGeneric("fill_numeric", function(object, method) {
   standardGeneric("fill_numeric")
 })
 
-setMethod("fill_numeric", "lomza",
+setMethod("fill_numeric", "edatool",
           function(object, method) {
             if (!is.character(method) && !is.list(method)) {
               stop("Invalid method. Must be a character string or a list")
             }
-            
+
             if (is.character(method)) {
               if (!method %in% c("del_row", "del_col", "mean", "median", "mode")) {
                 stop("Invalid method. Choose from 'del_row', 'del_col', 'mean', 'median', 'mode'")
@@ -319,18 +319,18 @@ setMethod("fill_numeric", "lomza",
 
 #' Fill Missing Values for Non-numeric Columns
 #'
-#' This function provides multiple methods to handle missing values in non-numeric columns of the 
-#' "lomza" object. The methods include deleting the row or column containing the missing value, 
+#' This function provides multiple methods to handle missing values in non-numeric columns of the
+#' "edatool" object. The methods include deleting the row or column containing the missing value,
 #' filling the missing value with the most frequent value, or filling with a specified constant value.
-#' @param object An object of class "lomza".
-#' @return The "lomza" object with missing values in non-numeric columns filled.
+#' @param object An object of class "edatool".
+#' @return The "edatool" object with missing values in non-numeric columns filled.
 #' @export
 
 setGeneric("fill_non_numeric", function(object, method) {
   standardGeneric("fill_non_numeric")
 })
 
-setMethod("fill_non_numeric", "lomza",
+setMethod("fill_non_numeric", "edatool",
           function(object, method) {
             if (!is.character(method) && !is.list(method)) {
               stop("Invalid method. Must be a character string or a list")
@@ -375,10 +375,10 @@ setMethod("fill_non_numeric", "lomza",
 
 #' Count Missing Values
 #'
-#' This function counts the number of missing values in each column of the "lomza" object and 
+#' This function counts the number of missing values in each column of the "edatool" object and
 #' returns a report.
-#' @param object An object of class "lomza".
-#' @return A report detailing the number of missing values in each column of the "lomza" object.
+#' @param object An object of class "edatool".
+#' @return A report detailing the number of missing values in each column of the "edatool" object.
 #' @export
 
 cppFunction("
@@ -406,7 +406,7 @@ setGeneric("missing_report", function(object) {
   standardGeneric("missing_report")
 })
 
-setMethod("missing_report", "lomza",
+setMethod("missing_report", "edatool",
           function(object) {
             report <- data.frame(matrix(ncol = 4, nrow = 0))
             colnames(report) <- c("Column Name", "Full Values", "Missing Values", "Percentage Missing")
